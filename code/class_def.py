@@ -47,7 +47,7 @@ class Representation(list):
         """
         for i in range(self.n):
             element = {dim: random.gauss(v[0], v[1]) for dim, v in self.dimensions}
-            element["act"] = self.starting_act
+            element['act'] = self.starting_act
             self.append(element)
 
         self.recalibrate_meta()
@@ -59,7 +59,7 @@ class Representation(list):
         """
         for dim in self.dimensions:
             self.dimensions[dim] = (stat.mean([token[dim] for token in self]),
-                                    stat.sd([token[dim] for token in self]))
+                                    stat.stdev([token[dim] for token in self]))
         self.n = len(self)
 
     def forget(self, m):
@@ -70,11 +70,23 @@ class Representation(list):
         """
         random.shuffle(self)
         self = self[:self.n - m]
-
         self.recalibrate_meta()
 
     def incorporate_new(self, new_token):
         self.append(new_token)
         self.recalibrate_meta()
 
+    def produce_new(self):
+        activated = []
+        token = {}
+        try:
+            for dim in self.dimensions:
+                token[dim] = stat.mean([token[dim] * token['act'] for token in activated])
+        except stat.StatisticsError:
+            print('You have no activated tokens')
 
+
+
+def EmptyError(Exception):
+    """Raised when no tokens are activated"""
+    pass
