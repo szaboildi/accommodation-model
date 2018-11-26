@@ -76,12 +76,14 @@ class Representation(list):
         self.append(new_token)
         self.recalibrate_meta()
 
+    ### TODO: produce_new() needs to be hammered out to be weighted
     def produce_new(self):
         activated = []
         token = {}
         try:
             for dim in self.dimensions:
-                token[dim] = stat.mean([token[dim] * token['act'] for token in activated])
+                token[dim] = sum([token[dim] * token['act'] for token in activated]) /\
+                             sum([token['act'] for token in activated])
         except stat.StatisticsError:
             print('You have no activated tokens')
 
