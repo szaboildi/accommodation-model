@@ -22,9 +22,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 ###########################################
 
 import random
-import statistics as stat
+import statistics as stats
 from scipy.spatial import distance
-from pip._internal import main
 import plotly
 
 class Representation(list):
@@ -54,8 +53,8 @@ class Representation(list):
         :return: None, changes representation in place
         """
         for dim in self.dimensions:
-            self.dimensions[dim] = (stat.mean([token[dim] for token in self]),
-                                    stat.stdev([token[dim] for token in self]))
+            self.dimensions[dim] = (stats.mean([token[dim] for token in self]),
+                                    stats.stdev([token[dim] for token in self]))
         self.n = len(self)
 
 
