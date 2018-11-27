@@ -28,7 +28,7 @@ from representation_class import Representation
 
 def main():
     random.seed(1)
-
+    """
     #VOT
     speaker_vless_asp = Representation(n=550, dims=[('VOT', 70, 5)], act=0.1)
     speaker_vless_asp.populate()
@@ -75,6 +75,7 @@ def main():
             no_asp_f.write(item + '\n')
 
     """
+
     # Vowels
     male_front_low = Representation(n=550, dims=[('F1', 6.5, 0.5), ('F2', 11.8, 0.5)], act=0.1)
     male_front_low.populate()
@@ -94,7 +95,8 @@ def main():
     for i in range(20):
         token = random.choice(interloc_front_low)
         male_front_low.activate_3(token, 50)
-        male_front_low.incorporate(token)
+        # Comment out following line for dual-pool simulation
+        # male_front_low.incorporate(token)
         sp_token = male_front_low.produce_new(starting_act=0.1)
         male_front_low.incorporate(sp_token)
         male_production.append(str(sp_token['F1']) + '\t' + str(sp_token['F2']))
@@ -105,7 +107,8 @@ def main():
     for i in range(20):
         token = random.choice(interloc_front_low)
         fem_front_low.activate_3(token, 50)
-        fem_front_low.incorporate(token)
+        # Comment out following line for dual-pool simulation
+        # fem_front_low.incorporate(token)
         sp_token = fem_front_low.produce_new(starting_act=0.1)
         fem_front_low.incorporate(sp_token)
         female_production.append(str(sp_token['F1']) + '\t' + str(sp_token['F2']))
@@ -113,15 +116,15 @@ def main():
         fem_front_low.deactivate_flex()
 
     with open(os.path.join(*(os.pardir, 'outputs', 'vowels',
-                        'frontlow_male_F1F2.txt')), 'w', encoding='utf-8') as male_f:
+                        'frontlow_male_F1F2_dual.txt')), 'w', encoding='utf-8') as male_f:
         for item in male_production:
             male_f.write(item + '\n')
 
     with open(os.path.join(*(os.pardir, 'outputs', 'vowels',
-                        'frontlow_female_F1F2.txt')), 'w', encoding='utf-8') as female_f:
+                        'frontlow_female_F1F2_dual.txt')), 'w', encoding='utf-8') as female_f:
         for item in female_production:
             female_f.write(item + '\n')
-    """
+
 
 
 if __name__ == '__main__':
