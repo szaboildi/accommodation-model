@@ -23,9 +23,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 
 import random
 import statistics as stat
-from functools import reduce
 from scipy.spatial import distance
-
+from pip._internal import main
+import plotly
 
 class Representation(list):
     def __init__(self, n, dims=(), act=0.0):
@@ -130,6 +130,7 @@ class Representation(list):
         for i in range(n):
             self[i]['act'] += added_act
 
+
     def activate_2(self, token):
         """
         Activation function: after a new token is added
@@ -139,7 +140,13 @@ class Representation(list):
         :param token: New token that causes activation
         :return: None, changes representation in place
         """
-        pass
+        for t in self:
+            dist = distance.euclidean(
+                [v for k, v in t.items() if k != 'act'],
+                [v for k, v in token.items() if k != 'act'])
+            if dist == 0:
+                dist = 0.001
+            t['act'] += 1 / dist
 
     def activate_3(self, token, n):
         """
@@ -192,7 +199,9 @@ if __name__ == '__main__':
     # print(token)
     rep1.incorporate(token)
     # print(rep1)
-    rep1.activate_1(token, 20, 0.1)
-    #print([[v for k, v in t.items() if k != 'act'] for t in rep1])
-    print(len([t for t in rep1 if t['act'] == 0.1]))
-    print(len([t for t in rep1 if t['act'] == 0.2]))
+    # rep1.activate_1(token, 20, 0.1)
+    rep1.activate_2(token)
+    print(rep1)
+    print
+    # print(len([t for t in rep1 if t['act'] == 0.1]))
+    # print(len([t for t in rep1 if t['act'] == 0.2]))
