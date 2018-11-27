@@ -50,9 +50,10 @@ class Representation(list):
             element['act'] = self.starting_act
             self.append(element)
 
-        self.recalibrate_meta()
+        self.update_meta()
 
-    def recalibrate_meta(self):
+
+    def update_meta(self):
         """
         Updates the attributes automatically based on the properties of the set.
         :return: None, does it in place
@@ -62,6 +63,7 @@ class Representation(list):
                                     stat.stdev([token[dim] for token in self]))
         self.n = len(self)
 
+
     def forget(self, m):
         """
         "Forgets" m number of elements. Tokens will be shuffled in the process.
@@ -70,25 +72,36 @@ class Representation(list):
         """
         random.shuffle(self)
         self = self[:self.n - m]
-        self.recalibrate_meta()
+        self.update_meta()
+
 
     def incorporate_new(self, new_token):
+        """
+        Incorporate a new token into the representation, metadata of representation gets updated
+        :param new_token: Token to be added
+        :return: None, does it in place
+        """
         self.append(new_token)
-        self.recalibrate_meta()
+        self.update_meta()
 
-    ### TODO: produce_new() needs to be hammered out to be weighted
-    def produce_new(self):
-        activated = []
-        token = {}
+
+    def produce_new(self, starting_act=None):
+        if starting_act == None:
+            starting_act = self.starting_act
+        activated = [token for token in self if token['act'] != 0]
+        token = {"act": starting_act}
         try:
             for dim in self.dimensions:
                 token[dim] = sum([token[dim] * token['act'] for token in activated]) /\
                              sum([token['act'] for token in activated])
+            return token
         except stat.StatisticsError:
             print('You have no activated tokens')
 
-
-
-def EmptyError(Exception):
-    """Raised when no tokens are activated"""
-    pass
+    ### TODO: define activation function
+    def activate_1(self):
+        """
+        Vanilla activation function, n closest get activated
+        :return:
+        """
+        pass
