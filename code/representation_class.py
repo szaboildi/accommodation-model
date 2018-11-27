@@ -121,11 +121,11 @@ class Representation(list):
         :param added_act: How much to increment activation levels by
         :return: None, changes representation in place
         """
+        # Sort exemplars by their distance from the new token
         self.sort(key=lambda t: distance.euclidean(
             [v for k, v in t.items() if k != 'act'],
             [v for k, v in token.items() if k != 'act']))
-
-        # change activation for tokens whose distance matches the distances
+        # Modify the first n token's activation levels
         for i in range(n):
             self[i]['act'] += added_act
 
@@ -158,10 +158,20 @@ class Representation(list):
         :param n: Number of tokens to activate
         :return: None, changes representation in place
         """
-        pass
+        # Sort exemplars by their distance from the new token
+        self.sort(key=lambda t: distance.euclidean(
+            [v for k, v in t.items() if k != 'act'],
+            [v for k, v in token.items() if k != 'act']))
+        # Modify the closest n exemplar's activation level
+        for i in range(n):
+            dist = distance.euclidean(
+                [v for k, v in self[i].items() if k != 'act'],
+                [v for k, v in token.items() if k != 'act'])
+            if dist == 0:
+                dist = 0.001
+            self[i]['act'] += 1 / dist
 
-
-# Deactivation functions: fixed and flexible
+    # Deactivation functions: fixed and flexible
     def deactivate_fix(self, amount):
         """
         Decreases the activation level of all exemplars
@@ -182,6 +192,7 @@ class Representation(list):
         :return: None, changes representation in place
         """
         act_levels = {token['act'] for token in self if token['act'] != 0}
+        print(min(act_levels))
         self.deactivate_fix(min(act_levels))
 
 
@@ -189,18 +200,13 @@ class Representation(list):
 if __name__ == '__main__':
     random.seed(0)
     rep1 = Representation(n=50, dims=[('thing', 10, 0.5)], act=0.1)
-    # print(rep1)
     rep1.populate()
-    # print(rep1)
     rep1.forget(m=2)
-    # print(rep1)
-    token = rep1.produce_new()
-    # print(token)
-    rep1.incorporate(token)
-    # print(rep1)
-    # rep1.activate_1(token, 20, 0.1)
-    rep1.activate_2(token)
-    print(rep1)
-    print
-    # print(len([t for t in rep1 if t['act'] == 0.1]))
-    # print(len([t for t in rep1 if t['act'] == 0.2]))
+    token1 = rep1.produce_new()
+    rep1.incorporate(token1)
+    # rep1.activate_1(token1, 20, 0.1)
+    rep1.activate_2(token1)
+    # rep1.activate_3(token1, 20)
+    token2 = rep1.produce_new()
+    # rep1.deactivate_fix(0.1)
+    # rep1.deactivate_flex()
