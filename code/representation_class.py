@@ -23,6 +23,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 
 import random
 import statistics as stat
+from functools import reduce
+from scipy.spatial import distance
+
 
 class Representation(list):
     def __init__(self, n, dims=(), act=0.0):
@@ -63,7 +66,9 @@ class Representation(list):
         """
         for i in range(self.n):
             element = {dim: random.gauss(v[0], v[1]) for (dim, v) in self.dimensions.items()}
+            # element['eucl'] = abs(reduce(lambda x, y: x*y, element.values()))
             element['act'] = self.starting_act
+
             self.append(element)
         self.update_meta()
 
@@ -80,7 +85,7 @@ class Representation(list):
         self.update_meta()
 
 
-    def incorporate_new(self, new_token):
+    def incorporate(self, new_token):
         """
         Incorporate a new token into the representation, metadata of representation gets updated
         :param new_token: Token to be added
@@ -94,11 +99,13 @@ class Representation(list):
         if starting_act == None:
             starting_act = self.starting_act
         activated = [token for token in self if token['act'] != 0]
-        token = {"act": starting_act}
+        token = dict()
         try:
             for dim in self.dimensions:
                 token[dim] = sum([token[dim] * token['act'] for token in activated]) /\
                              sum([token['act'] for token in activated])
+                # token['eucl'] = abs(reduce(lambda x, y: x * y, token.values()))
+                token['act'] = starting_act
             return token
         except ZeroDivisionError:
             print('You have no activated tokens')
@@ -115,7 +122,13 @@ class Representation(list):
         :param added_act: How much to increment activation levels by
         :return: None, changes representation in place
         """
-        pass
+        self.sort(key=lambda t: distance.euclidean(
+            [v for k, v in t.items() if k != 'act'],
+            [v for k, v in token.items() if k != 'act']))
+
+        # change activation for tokens whose distance matches the distances
+        for i in range(n):
+            self[i]['act'] += added_act
 
     def activate_2(self, token):
         """
@@ -168,11 +181,18 @@ class Representation(list):
 
 # Debugging
 if __name__ == '__main__':
+    random.seed(0)
     rep1 = Representation(n=50, dims=[('thing', 10, 0.5)], act=0.1)
-    print(rep1)
+    # print(rep1)
     rep1.populate()
-    print(rep1)
+    # print(rep1)
     rep1.forget(m=2)
-    print(rep1)
+    # print(rep1)
     token = rep1.produce_new()
-    print(token)
+    # print(token)
+    rep1.incorporate(token)
+    # print(rep1)
+    rep1.activate_1(token, 20, 0.1)
+    #print([[v for k, v in t.items() if k != 'act'] for t in rep1])
+    print(len([t for t in rep1 if t['act'] == 0.1]))
+    print(len([t for t in rep1 if t['act'] == 0.2]))
