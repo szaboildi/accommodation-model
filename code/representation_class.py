@@ -18,7 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 
 ###########################################
 ## Defining the class of representations ##
-## and the class of tokens               ##
+## and its utility functions             ##
 ###########################################
 
 import random
@@ -110,7 +110,7 @@ class Representation(list):
             print('You have no activated tokens')
 
 
-    ### TODO: define activation functions
+    # Activation functions
     def activate_1(self, token, n, added_act):
         """
         Vanilla activation function: after a new token is added
@@ -128,7 +128,6 @@ class Representation(list):
         # Modify the first n token's activation levels
         for i in range(n):
             self[i]['act'] += added_act
-
 
     def activate_2(self, token):
         """
@@ -168,8 +167,9 @@ class Representation(list):
                 [v for k, v in self[i].items() if k != 'act'],
                 [v for k, v in token.items() if k != 'act'])
             if dist == 0:
-                dist = 0.001
+                dist = 0.1
             self[i]['act'] += 1 / dist
+
 
     # Deactivation functions: fixed and flexible
     def deactivate_fix(self, amount):
@@ -192,14 +192,13 @@ class Representation(list):
         :return: None, changes representation in place
         """
         act_levels = {token['act'] for token in self if token['act'] != 0}
-        print(min(act_levels))
         self.deactivate_fix(min(act_levels))
 
 
 # Debugging
 if __name__ == '__main__':
     random.seed(0)
-    rep1 = Representation(n=50, dims=[('thing', 10, 0.5)], act=0.1)
+    rep1 = Representation(n=50, dims=[('dimension', 10, 0.5)], act=0.1)
     rep1.populate()
     rep1.forget(m=2)
     token1 = rep1.produce_new()
