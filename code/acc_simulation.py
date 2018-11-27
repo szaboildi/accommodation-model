@@ -28,14 +28,21 @@ from representation_class import Representation
 
 def main():
     random.seed(1)
-    """
+
     #VOT
-    speaker_vless_asp = Representation(n=250, dims=[('VOT', 70, 2)], act=0.1)
+    speaker_vless_asp = Representation(n=550, dims=[('VOT', 70, 5)], act=0.1)
     speaker_vless_asp.populate()
-    speaker_vless_no_asp = Representation(n=250, dims=[('VOT', 15, 2)], act=0.1)
+    speaker_vless_no_asp = Representation(n=550, dims=[('VOT', 15, 5)], act=0.1)
     speaker_vless_no_asp.populate()
-    interloc_vless = Representation(n=250, dims=[('VOT', 140, 10)])
+    interloc_vless = Representation(n=550, dims=[('VOT', 140, 5)])
     interloc_vless.populate()
+
+    asp_production = [
+        'Speaker (initial): ' + str(speaker_vless_asp),
+        'Interlocutor: ' + str(interloc_vless)]
+    no_asp_production = [
+        'Speaker (initial): ' + str(speaker_vless_no_asp),
+        'Interlocutor: ' + str(interloc_vless)]
 
     for i in range(20):
         token = random.choice(interloc_vless)
@@ -43,7 +50,8 @@ def main():
         speaker_vless_asp.incorporate(token)
         sp_token = speaker_vless_asp.produce_new(starting_act=0.1)
         speaker_vless_asp.incorporate(sp_token)
-        print(sp_token)
+        # print(sp_token)
+        asp_production.append(str(sp_token['VOT']))
         speaker_vless_asp.deactivate_flex()
 
     for i in range(20):
@@ -52,10 +60,21 @@ def main():
         speaker_vless_no_asp.incorporate(token)
         sp_token = speaker_vless_no_asp.produce_new(starting_act=0.1)
         speaker_vless_no_asp.incorporate(sp_token)
-        print(sp_token)
+        # print(sp_token)
+        no_asp_production.append(str(sp_token['VOT']))
         speaker_vless_no_asp.deactivate_flex()
-    """
 
+    with open(os.path.join(*(os.pardir, 'outputs', 'VOT',
+                             'aspirating_VOT.txt')), 'w', encoding='utf-8') as asp_f:
+        for item in asp_production:
+            asp_f.write(item + '\n')
+
+    with open(os.path.join(*(os.pardir, 'outputs', 'VOT',
+                             'non_aspirating_VOT.txt')), 'w', encoding='utf-8') as no_asp_f:
+        for item in no_asp_production:
+            no_asp_f.write(item + '\n')
+
+    """
     # Vowels
     male_front_low = Representation(n=550, dims=[('F1', 6.5, 0.5), ('F2', 11.8, 0.5)], act=0.1)
     male_front_low.populate()
@@ -102,6 +121,8 @@ def main():
                         'frontlow_female_F1F2.txt')), 'w', encoding='utf-8') as female_f:
         for item in female_production:
             female_f.write(item + '\n')
+    """
+
 
 if __name__ == '__main__':
     main()
