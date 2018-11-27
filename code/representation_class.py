@@ -40,10 +40,12 @@ class Representation(list):
         self.starting_act = act
         self.n = n
 
-    def __str__(self):
+    def __str__(self, no_elements=True):
         meta = "Representation with " + str(len(self)) + \
                " tokens\nDimensions: " + str(self.dimensions) + '\n'
         elements = list.__str__(self)
+        if no_elements:
+            return meta
         return meta + elements
 
 
