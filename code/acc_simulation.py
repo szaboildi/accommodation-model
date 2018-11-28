@@ -81,7 +81,7 @@ def main():
     male_front_low.populate()
     fem_front_low = Representation(n=5000, dims=[('F1', 8.2, 0.5), ('F2', 12.1, 0.5)], act=0.1)
     fem_front_low.populate()
-    interloc_front_low = Representation(n=600, dims=[('F1', 5.9, 0.1), ('F2', 11.2, 0.1)])
+    interloc_front_low = Representation(n=5000, dims=[('F1', 5.9, 0.1), ('F2', 11.2, 0.1)])
     interloc_front_low.populate()
 
     male_production = [
@@ -95,7 +95,7 @@ def main():
     # "Male" model
     for i in range(60):
         token = random.choice(interloc_front_low)
-        male_front_low.activate_3(token, 100)
+        male_front_low.activate_3(token, 200)
         # Comment out following line for dual-pool simulation
         male_front_low.incorporate(token)
         sp_token = male_front_low.produce_new(starting_act=0.1)
@@ -106,7 +106,7 @@ def main():
     # "Female" model
     for i in range(60):
         token = random.choice(interloc_front_low)
-        fem_front_low.activate_3(token, 100)
+        fem_front_low.activate_3(token, 200)
         # Comment out following line for dual-pool simulation
         fem_front_low.incorporate(token)
         sp_token = fem_front_low.produce_new(starting_act=0.1)
