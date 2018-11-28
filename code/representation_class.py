@@ -24,7 +24,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 import random
 import statistics as stats
 from scipy.spatial import distance
-import plotly
+# import plotly
 
 class Representation(list):
     def __init__(self, n, dims=(), act=0.0):
