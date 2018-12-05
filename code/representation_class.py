@@ -25,6 +25,16 @@ import random
 import statistics as stats
 from scipy.spatial import distance
 # import plotly
+import math
+
+
+def sigmoid(x):
+    return 1 / (1 + math.exp(-x))
+
+
+def proportionate_inverse(x):
+    return sigmoid(1/x)
+
 
 class Representation(list):
     def __init__(self, n, dims=(), act=0.0):
@@ -48,7 +58,6 @@ class Representation(list):
             return meta
         return meta + elements
 
-
     def update_meta(self):
         """
         Updates the attributes automatically based on the properties of the set.
@@ -58,7 +67,6 @@ class Representation(list):
             self.dimensions[dim] = (stats.mean([token[dim] for token in self]),
                                     stats.stdev([token[dim] for token in self]))
         self.n = len(self)
-
 
     def populate(self):
         """
@@ -73,7 +81,6 @@ class Representation(list):
             self.append(element)
         self.update_meta()
 
-
     def forget(self, m):
         """
         "Forgets" m number of elements. Tokens will be shuffled in the process.
@@ -85,7 +92,6 @@ class Representation(list):
             popped = self.pop()
         self.update_meta()
 
-
     def incorporate(self, new_token):
         """
         Incorporate a new token into the representation, metadata of representation gets updated
@@ -94,7 +100,6 @@ class Representation(list):
         """
         self.append(new_token)
         self.update_meta()
-
 
     def produce_new(self, starting_act=None):
         if starting_act == None:
@@ -146,7 +151,7 @@ class Representation(list):
                 [v for k, v in token.items() if k != 'act'])
             if dist == 0:
                 dist = 0.001
-            t['act'] += 1 / dist
+            t['act'] += proportionate_inverse(dist)
 
     def activate_3(self, token, n):
         """
@@ -170,7 +175,7 @@ class Representation(list):
                 [v for k, v in token.items() if k != 'act'])
             if dist == 0:
                 dist = 0.1
-            self[i]['act'] += 1 / dist
+            self[i]['act'] += proportionate_inverse(dist)
 
 
     # Deactivation functions: fixed and flexible
