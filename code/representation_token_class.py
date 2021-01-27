@@ -40,10 +40,10 @@ class Token:
         """
         Initializes a token with a given number of values along certain phonetic dimensions
         and with a certain activation level and label (lexical information)
-        :param dims: Tuple of dimensions, where each dimension is a pair of the form:
+        :param t_dims: Tuple of dimensions, where each dimension is a pair of the form:
                      ('name', value)
-        :param act: Activation of new token
-        :param label: Label of token
+        :param t_act: Activation of new token
+        :param t_label: Label of the token
         :return:
         """
 
@@ -89,12 +89,12 @@ class Representation:
             self.n = n
 
         if dims is None:
-            self.dimensions=()
+            self.dimensions = ()
         else:
             self.dimensions = {dim[0]: (dim[1], dim[2]) for dim in dims}
 
         if act is None:
-            self.starting_act=0.0
+            self.starting_act = 0.0
         else:
             self.starting_act = act
 
@@ -113,8 +113,9 @@ class Representation:
         if elements==[]:
             return meta
 
-        #elements_str = {str(element) for element in elements}
-        elements_str=""
+        elements_str = {str(element) for element in elements}
+        #elements_str=""
+
         return meta + str(elements_str)
 
 
@@ -134,15 +135,12 @@ class Representation:
         :return: None, changes representation in place
         """
         for i in range(self.n):
-            #token = Token(t_dims=None, t_act=None, t_label=None)
             dims_for_token = ((dim, random.gauss(v[0], v[1])) for (dim, v) in self.dimensions.items())
-            t = Token(dims_for_token, self.starting_act, self.label)
-            #token = Token()
+            t = Token(t_dims=dims_for_token, t_act=self.starting_act, t_label=self.label)
+
             t.dimensions = {dim: random.gauss(v[0], v[1]) for dim, v in self.dimensions.items()}
             t.act = self.starting_act
             t.label = self.label
-            # ((dim, random.gauss(v[0], v[1])) for (dim, v) in self.dimensions.items())
-            # element['eucl'] = abs(reduce(lambda x, y: x*y, element.values()))
 
             self.tokens.append(t)
         self.update_meta()
@@ -173,16 +171,20 @@ class Representation:
 
     def produce_new(self, label, starting_act=None):
         """
-        :param label:
-        :param starting_act:
-        :return:
+        Produces new token based on the Representation and its current activation pattern
+        :param label: Label of token
+        :param starting_act: Starting activation of token
+        :return: New instantiation of Token
         """
         if starting_act is None:
             starting_act = self.starting_act
         activated = [act_t for act_t in self.tokens if act_t.act != 0 and act_t.label == label]
         token = Token()
         token.dimensions={}
-        token.label = label
+        if label == None:
+            token.label = self.label
+        else:
+            token.label = label
 
         try:
             for dim in self.dimensions.keys():
@@ -190,6 +192,7 @@ class Representation:
                              sum([token.act for token in activated]) + (random.random() *
                                                                         random.choice([-2, -1, 1, 2]))
                 # token['eucl'] = abs(reduce(lambda x, y: x * y, token.values()))
+
                 token.act = starting_act
             return token
         except ZeroDivisionError:
@@ -199,7 +202,8 @@ class Representation:
 
     def combine(self, other_rep):
         """
-        Combines two representations into one
+        Combines two representations into one. The new representation is defined along the same dimensions
+        as the initial representation (left-join)
         :param other_rep: The representation to combine with self
         :return: New representation with a potentially multimodal distribution
         """
@@ -281,6 +285,7 @@ class Representation:
         model = KernelDensity(bandwidth=bw, kernel='gaussian')
         obs_values = obs_values.reshape((len(obs_values), 1))
         model.fit(obs_values)
+
         # sample probabilities for a range of outcomes
         #poss_values = np.asarray([value for value in range(minvalue, maxvalue)])
         value_format = np.asarray([value])
@@ -315,6 +320,8 @@ class Representation:
 
         return bayesian
 
+
+
     # Activation functions
     def activate_1(self, new_token, n, added_act):
         """
@@ -334,6 +341,7 @@ class Representation:
         for i in range(n):
             self.tokens[i].act += added_act
 
+
     def activate_2(self, new_token):
         """
         Activation function: after a new token is added
@@ -350,6 +358,7 @@ class Representation:
             if dist == 0:
                 dist = 0.001
             t.act += proportionate_inverse(dist)
+
 
     def activate_3(self, new_token, n):
         """
@@ -403,7 +412,7 @@ class Representation:
                 self.tokens[i].act += proportionate_inverse(dist) * coeff
 
 
-# Deactivation functions: fixed and flexible
+    # Deactivation functions: fixed and flexible
     def deactivate_fix(self, amount):
         """
         Decreases the activation level of all exemplars
@@ -416,6 +425,7 @@ class Representation:
                 token.act -= amount
             else:
                 token.act = 0
+
 
     def deactivate_flex(self):
         """
@@ -433,15 +443,12 @@ if __name__ == '__main__':
     random.seed(0)
     rep1 = Representation(n=50, dims=[('dummy_d', 10, 0.5)], act=0.1, label="foo")
     rep1.populate()
-    #print(rep1)
+
     rep2 = Representation(n=15, dims=[('dummy_d', 100, 0.5)], act=0.1, label="bar")
     rep2.populate()
-    #print(rep2)
-    # print(rep1.dimensions)
-    # print(rep1.dimensions.keys())
-    # print(list(rep1.dimensions.keys())[0])
+
     rep_sum = rep1.combine(rep2)
-    #print(str(rep_sum))
+
 
     input_token = Token(t_dims=[('dummy_d', 55)], t_label="foo")
     #[print(t) for t in rep_sum.closest_neighbors(input_token, 10)]
