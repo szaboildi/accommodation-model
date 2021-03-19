@@ -29,7 +29,7 @@ In addition there are 2 versions of the deactivation function:
 
 This file also defines some mathematical functions, necessary for somee of the ```Representation``` methods.
 
-The ```representation_class.py``` file is depreciated.
+The ```representation_class.py``` file is deprecated.
 
 
 ### Simulations
@@ -39,7 +39,7 @@ The speaker is then exposed to a \[p\] token with 15ms VOT (although the script 
 
 The baseline and the 20 speaker productions are outputted into a ```.txt``` file.
 
-Aside from the other three alternatives for stimuli, this scripts includes a commented out simulation for vowel formants as well. This simulation works similarly, but uses the depreciated ```representation_class.py``` file, which has to be imported instead of ```representation_token_class.py```.
+Aside from the other three alternatives for stimuli, this scripts includes a commented out simulation for vowel formants as well. This simulation works similarly, but uses the deprecated ```representation_class.py``` file, which has to be imported instead of ```representation_token_class.py```.
 
 
 ## Reference
