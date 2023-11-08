@@ -43,4 +43,4 @@ Aside from the other three alternatives for stimuli, this scripts includes a com
 
 
 ## Reference
-Szabó, Ildikó Emese. 2020. _Representational limitations and consequences of phonetic accommodation: English and Hungarian speakers’ imitation of word-initial voiced and voiceless stops_. Doctoral dissertation at NYU. Available at: [https://lingbuzz.net/lingbuzz/005497](url)
+Szabó, Ildikó Emese. 2020. _Representational limitations and consequences of phonetic accommodation: English and Hungarian speakers’ imitation of word-initial voiced and voiceless stops_. Doctoral dissertation at NYU. Available at: <https://lingbuzz.net/lingbuzz/005497>
