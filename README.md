@@ -18,15 +18,16 @@ The ```code/``` folder contains the scripts that make up the model, and the ```o
 The ```representation_token_class.py``` defines two new classes. The ```Token``` class is used for representing individual instances of speech sounds (e.g. an individual instance of a \[p\] sound), and the ```Representation``` class represents an entire set of them (e.g. /p/: all the \[p\]'s the speaker encountered). While an instantiation of the ```Token``` class has attributes, describing the phonetic details of the given token along one or more dimensions (e.g. F2 of 212.7Hz or 45.1ms VOT), an instantiation of the  ```Representation``` class includes a set of instantiations of ```Token```, as well as some metadata about the distributions of these tokesn (mean and standard deviation along each dimension, number of tokens in the representation). The number and name of dimensions is up to the user's specification.
 
 ```Representation``` also has some utility methods, such as ```.update_metadata()```, ```.incorporate(token)```, ```.produce_new()```, and ```.populate()```, which populates the representation based on parameters (how many tokens it should be populated with, and what distribution the tokens should be randomly chosen from). On top of these utility methods, activation and deactivation methods are also implemented, which can be used to model different theories for how activation and deactivation could happen. There are four activation functions: 
-* ```.activate_1(t, n, a)``` increments the activation level of the _n_ closest tokens to the incoming token _t_ by an amount _a_.
+* ```.activate_1(t, n, a)``` increments the activation level of the _n_ closest tokens to the incoming token _t_ by a fixed amount of _a_.
 * ```.activate_2(t)``` increments the activation level of all tokens in the representation, and the amount of the increment is inversely proportionate to the given token's distance from incoming token _t_.
-* ```.activate_3(t, n)``` does the same as ```.activate_2(t)```, but rather than incrementing the activation level of all tokens in the representation, only the closest _n_ number of tokens are affected.
-* ```activate_4(t, n, coeff)``` increments the activation level of the closest _n_ number of tokens to the incoming token _t_, and their  activation levels are incremented by an amount proportionate to their closeness to the new token _t_ multiplied by a coefficient _coeff_.
+* ```.activate_3(t, n)``` raises the tokens activation levels in inverse proportion of distance from _t_ ```.activate_2(t)```, but rather than incrementing the activation level of all tokens in the representation, only the closest _n_ number of tokens are affected.
+* ```activate_4(t, n, coeff)``` increments the activation level of the closest _n_ number of tokens to the incoming token _t_, and their activation levels are incremented by an amount proportionate to their closeness to the new token _t_ multiplied by a coefficient _coeff_.
+
 In addition there are 2 versions of the deactivation function:
 * ```.deactivate_fix(a)``` decreases the activation level of all tokens by a fixed custom amount _a_, with a floor of 0.
 * ```.deactivate_flex()``` decreases the activation level of all tokens by the amount of the lowest non-zero activation level.
 
-This file also defines some mathematical functions, necessary for somee of the ```Representation``` methods.
+This file also defines some mathematical functions, necessary for some of the ```Representation``` methods.
 
 The ```representation_class.py``` file is deprecated.
 
